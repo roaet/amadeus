@@ -14,7 +14,7 @@ Packages known to fail without packages installed first:
 `sudo apt install freetds-bin freetds-common freetds-dev libct4 libsybdb5`
 Read the FreeTDS section
 
-### Mark sure you install in a virtualenv
+### Make sure you install in a virtualenv
 
 Packages that need to be installed first:
 - virtualenv
@@ -127,4 +127,33 @@ Ubuntu Packages that need to be installed to fix pyodbc
 - https://stackoverflow.com/questions/31353137/sql-h-not-found-when-installing-pyodbc-on-heroku
 - http://help.interfaceware.com/kb/904
 
+## Installing Rabbitmq
 
+Rabbitmq is required for amadeus to work. It serves as the communication bus
+for the sub processes.
+
+### Ubuntu on WSL
+
+Installing on ubuntu is simple if your ubuntu version is recent:
+
+```
+sudo apt-get update
+sudo apt-get install rabbitmq-server
+```
+
+After installation you should make an admin user:
+
+```
+sudo rabbitmqctl add_user admin password 
+sudo rabbitmqctl set_user_tags admin administrator
+sudo rabbitmqctl set_permissions -p / admin ".*" ".*" ".*"
+```
+
+Using the RabbitMQ management console makes configuration easier
+
+```
+sudo rabbitmq-plugins enable rabbitmq_management
+sudo chown -R rabbitmq:rabbitmq /var/lib/rabbitmq/
+```
+
+You can then connect to the server at `http://[server-ip]:15672/`

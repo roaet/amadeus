@@ -6,6 +6,7 @@ import pandas as pd
 import yaml
 
 from amadeus import constants
+from amadeus.datasources import cache
 from amadeus import utils
 
 
@@ -65,7 +66,7 @@ class BaseDatasource(object):
 
     def _generate_cache_filename(self, **configuration):
         suffix = self._generate_df_suffix_from_conf(**configuration)
-        return "df_%s.csv" % suffix
+        return "cache_%s" % suffix
 
     def _target_cache_file(self, **configuration):
         filename = self._generate_cache_filename(**configuration)
@@ -86,9 +87,17 @@ class BaseDatasource(object):
                 df[col] = df[col].astype(np.float64)
         return df
 
+    def _write_cache(self, filename, df):
+        cache_obj = cache.CacheObject(filename)
+        cache_obj.write(df)
+
+    def _read_cache(self, filename):
+        cache_obj = cache.CacheObject(filename)
+        df = cache_obj.read()
+        return df
+
     def _load_from_cache(self, filename):
-        LOG.debug("Loading DF from cache %s" % filename)
-        df = pd.read_csv(filename)
+        df = self._read_cache(filename)
         LOG.debug("Loaded types: %s" % df.dtypes)
         df = self._set_types(df)
         LOG.debug("Set types: %s" % df.dtypes)
@@ -102,7 +111,8 @@ class BaseDatasource(object):
         if not self.do_cache:
             return False
         filename = self._create_target_filename(**configuration)
-        return utils.does_file_exist(filename)
+        cache_obj = cache.CacheObject(filename)
+        return cache_obj.exists()
 
     def _precache(self, **configuration):
         filename = self._create_target_filename(**configuration)
@@ -112,8 +122,7 @@ class BaseDatasource(object):
         if df is None or len(df) == 0:
             return None
         filename = self._create_target_filename(**configuration)
-        df.to_csv(filename, index=False)
-        LOG.debug("Wrote cache file %s" % filename)
+        self._write_cache(filename, df)
         return self._load_from_cache(filename)
 
     def _get_data(self, **configuration):

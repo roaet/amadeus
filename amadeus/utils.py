@@ -2,6 +2,7 @@ import glob
 import os
 import urllib
 import shutil
+import zipfile
 
 
 def glob_files_relative_to_from_dir(path, target_dir, pattern):
@@ -13,6 +14,20 @@ def glob_files_relative_to_from_dir(path, target_dir, pattern):
 def glob_files(path, pattern):
     file_search = os.path.join(path, pattern)
     return glob.glob(file_search)
+
+
+def zipdir(zipname, path, **kwargs):
+    ziph = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
+    for root, dir, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, basename(file)), basename(file))
+    ziph.close()
+
+
+def unziptodir(zipname, target, **kwargs):
+    ziph = zipfile.ZipFile(zipname, 'r', zipfile.ZIP_DEFLATED)
+    ziph.extractall(target)
+    ziph.close()
 
 
 def rmtree(path):
@@ -47,7 +62,9 @@ def does_directory_exist(directory):
     return os.path.isdir(directory)
 
 
-def make_directory(directory):
+def make_directory(directory, force=False):
+    if force and does_directory_exist(directory):
+        rmtree(directory)
     os.makedirs(directory)
 
 
