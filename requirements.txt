@@ -6,3 +6,4 @@ yamllint
 sqlalchemy
 pandas
 pyodbc
+pika

@@ -3,23 +3,18 @@ import logging
 import click
 
 from amadeus.config import Configuration
+from amadeus.connections import manager
 from amadeus.datasources import factory
 from amadeus.datasources import loader
 from amadeus.logger import Logger
-from amadeus.connections import manager
+from amadues import runnable
 from amadeus import utils
 
 
 LOG = logging.getLogger(__name__)
 
 
-class Runnable(object):
-    def __init__(self, debug):
-        self.conf = Configuration().config
-        Logger(self.conf, debug).configure()
-
-
-class RunExtract(Runnable):
+class RunExtract(runnable.Runnable):
     def __init__(self, debug, no_cache, purge):
         super(RunExtract, self).__init__(debug)
         self.no_cache = no_cache
@@ -45,14 +40,6 @@ class RunExtract(Runnable):
         df = ds.as_dataframe(configuration)
 
 
-def parse_configurations(confs):
-    out = {}
-    for conf in confs:
-        key, val = conf.split('=')
-        out[key] = val
-    return out
-
-
 @click.command(context_settings={'ignore_unknown_options': True})
 @click.option('--debug', is_flag=True,
               help='Debug mode flag for development mode. '
@@ -64,5 +51,5 @@ def parse_configurations(confs):
 @click.argument('datasource')
 @click.argument('configurations', nargs=-1)
 def extract(debug, no_cache, purge_cache, datasource, configurations):
-    conf = parse_configurations(configurations)
+    conf = runnable.parse_configurations(configurations)
     RunExtract(debug, no_cache, purge_cache).run(datasource, conf)
