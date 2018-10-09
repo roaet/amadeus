@@ -1,0 +1,8 @@
+click
+configobj
+jinja2
+pyyaml
+yamllint
+sqlalchemy
+pandas
+pyodbc

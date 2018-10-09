@@ -1,0 +1,83 @@
+---
+datasource:
+    type: sql
+    connection_name: sa3_ods
+    defaults:
+        mtd: false
+        limit: 0
+        offering: Total
+        start_date: '2018-01-01'
+        end_date: '2018-12-31'
+        sql_date: GETDATE()
+        service_id_str:
+            10, 10001, 12, 201, 202, 203, 204, 205, 206, 207,
+            208, 209, 210, 211, 212, 213, 214, 215, 216, 217,
+            218, 219, 22, 220, 221, 222, 223, 224, 225, 226,
+            228, 229, 230, 231, 232, 233, 234, 235, 236, 237,
+            238, 239, 26, 3, 35, 40, 42, 43, 44, 45, 46, 47,
+            48, 49, 51, 52, 53, 54, 55, 56
+    types:
+        source: string
+        date: date
+        month: date
+        account: string
+        offering: string
+        currency: string
+        invoiced: float
+    query: |
+        select
+            {% if limit -%}
+                top {{ limit }}
+            {% endif -%}
+            source = 'SA3'
+            {% if mtd -%}
+                , a.invoicedate as date
+            {% else -%}
+                , eomonth(a.invoicedate) as date
+            {% endif -%}
+            , rtrim (a.accountnumber) account
+            , offering = '{{ offering }}'
+            , currency = 'USD'
+            , sum (a.itemtotal) invoiced
+        from
+            sa3_ods.dbo.invoicelineitems a with (nolock) left join
+            sa3_ods.dbo.adminvoices b with (nolock)
+                on a.invoiceid = b.invoiceid left join
+            admcompanies c with (nolock)
+                on b.accountnumber = c.accountnumber
+        where
+            1=1
+            and b.void = 0
+            and b.invoicetype in ('signup', 'billing')
+            and a.itemtotal > 0
+            and a.paymentinterval <= 1
+            and a.invoicedate >= '{{ start_date }}'
+            {% if mtd -%}
+                and a.invoicedate <= '{{ end_date }}'
+            {% else -%}
+                and a.invoicedate <= eomonth({{ sql_date }})
+            {% endif -%}
+            {% if account_str -%}
+                and a.accountnumber in ({{ account_str }})
+            {% elif service_id_str -%}
+                and a.serviceid in ({{ service_id_str }})
+            {% endif -%}
+            {% if resell -%}
+                and c.accountnumber != '205592'
+                and c.companytype in ('reseller')
+                and (
+                    (
+                        c.accountnumber != '222512'
+                    ) or
+                    (
+                        c.invoicedate >= '2018-04-01'
+                        and c.accountnumber = '222512'
+                    )
+                )
+            {% endif -%}
+        {% if mtd -%}
+            group by a.invoicedate, a.accountnumber
+        {% else -%}
+            group by eomonth(a.invoicedate), a.accountnumber
+        {% endif -%}
+        ;

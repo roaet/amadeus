@@ -1,0 +1,12 @@
+---
+playbook:
+    type: base
+    executor: local_linear
+    movements:
+        - make_poop:
+              extract:
+                  name: poop
+                  args: limit=10
+    root:
+        - scene: Collect Poop
+          steps: [make_poop]
