@@ -13,7 +13,7 @@ LOG = logging.getLogger(__name__)
 class Player(runnable.Runnable):
     def __init__(self, debug):
         super(Player, self).__init__(debug)
-        self.bus = broker.AMQPBroker(self.conf, self._on_message)
+        self.bus = broker.AMQPBroker(self.conf)
 
     def _on_message(self, channel, method_frame, header_frame, body):
         LOG.debug(method_frame.delivery_tag)
@@ -21,7 +21,8 @@ class Player(runnable.Runnable):
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
 
     def run(self, configuration):
-        self.bus.blocking_listen(configuration)
+        self.bus.blocking_listen(
+            'player', configuration, 'test', self._on_message)
 
 
 @click.command(context_settings={'ignore_unknown_options': True})

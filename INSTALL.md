@@ -157,3 +157,38 @@ sudo chown -R rabbitmq:rabbitmq /var/lib/rabbitmq/
 ```
 
 You can then connect to the server at `http://[server-ip]:15672/`
+
+### Windows Service
+
+Installing on Windows is as easy as downloading the installer and clicking some
+links, except for one thing.
+
+First you need to download the erlang installer and run it as admin.
+
+```
+http://www.erlang.org/download.html
+```
+
+Then you can install rabbitmq server and install it without issue.
+
+```
+https://github.com/rabbitmq/rabbitmq-server/releases
+```
+
+You may run into an issue that looks like:
+
+```
+Authentication failed (rejected by the remote node), please check the Erlang
+cookie
+```
+
+The fix for this is to copy the erlang cookie file into the user home. In my
+case, since I ran the rabbit installer as Admin, the user home was
+Administrator.
+
+```
+# copy this file
+C:\Windows\system32\config\systemprofile\.erlang.cookie
+# to
+C:\Users\%USERNAME%\.erlang.cookie
+```

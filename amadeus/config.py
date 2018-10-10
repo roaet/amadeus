@@ -19,7 +19,7 @@ class Configuration(object):
             constants.TEST_DATA_DIR,
             constants.DEFAULT_RESOURCE_DIR,
             constants.DEFAULT_DATASOURCE_DIR,
-            constants.DEFAULT_PLAYBOOK_DIR,
+            constants.DEFAULT_COMPOSITION_DIR,
         ]
         for directory in checks:
             if not constants.does_directory_exist(directory):
@@ -33,7 +33,7 @@ class Configuration(object):
             "Training files: %s" % constants.DEFAULT_TRAINING_DIR,
             "Resource directory: %s" % constants.DEFAULT_RESOURCE_DIR,
             "Datasource directory: %s" % constants.DEFAULT_DATASOURCE_DIR,
-            "Playbook directory: %s" % constants.DEFAULT_PLAYBOOK_DIR,
+            "Composition directory: %s" % constants.DEFAULT_COMPOSITION_DIR,
             "User Home directory: %s" % constants.USER_HOME_DIR,
             "Default configuration: %s" % constants.DEFAULT_CONF_DIRS,
             "Cache directory: %s" % constants.CACHE_DIR,

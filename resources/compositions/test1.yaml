@@ -1,5 +1,5 @@
 ---
-playbook:
+composition:
     type: base
     executor: local_linear
     movements:

@@ -40,3 +40,4 @@ class Logger(object):
         ch.setLevel(level)
         ch.setFormatter(log_format)
         root_logger.addHandler(ch)
+        logging.getLogger('pika').setLevel(logging.INFO)

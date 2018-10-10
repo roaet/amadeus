@@ -7,7 +7,7 @@ from amadeus.connections import manager
 from amadeus.datasources import factory
 from amadeus.datasources import loader
 from amadeus.logger import Logger
-from amadues import runnable
+from amadeus import runnable
 from amadeus import utils
 
 

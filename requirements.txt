@@ -1,7 +1,7 @@
 click
 configobj
 jinja2
-pyyaml
+ruamel.yaml
 yamllint
 sqlalchemy
 pandas

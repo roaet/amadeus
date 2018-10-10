@@ -1,6 +1,6 @@
 import logging
 
-import yaml
+from ruamel import yaml
 from yamllint import config
 from yamllint import linter
 
@@ -40,7 +40,7 @@ class YAMLLoader(object):
 
     def get_type_from_yaml(self, yaml_file):
         with open(yaml_file, 'r') as stream:
-            yaml_obj = yaml.load(stream)
+            yaml_obj = yaml.safe_load(stream)
             return yaml_obj[self.base_key]['type']
 
     def _does_yaml_lint(self, yaml_file):
@@ -63,7 +63,7 @@ class YAMLLoader(object):
 
     def _does_yaml_exist(self, yaml_file):
         with open(yaml_file, 'r') as stream:
-            yaml_obj = yaml.load(stream)
+            yaml_obj = yaml.safe_load(stream)
             if yaml_obj is None:
                 LOG.warning("YAML object was None after load of file %s" %
                     (yaml_file))
@@ -72,18 +72,18 @@ class YAMLLoader(object):
 
     def _does_yaml_have_basic_keys(self, yaml_file):
         with open(yaml_file, 'r') as stream:
-            yaml_obj = yaml.load(stream)
-        if not self.base_object_class.check(yaml_obj):
+            yaml_obj = yaml.safe_load(stream)
+        if not self.base_object_class.check(yaml_obj, yaml_file):
             LOG.warning("%s failed basic check" % yaml_file)
             return False
         return True
 
     def _is_yaml_valid_for_type(self, yaml_file):
         with open(yaml_file, 'r') as stream:
-            yaml_obj = yaml.load(stream)
+            yaml_obj = yaml.safe_load(stream)
         ent_type = yaml_obj[self.base_key]['type']
         ent_class = self.factory.get_type(ent_type)
-        if not ent_class.check(yaml_obj):
+        if not ent_class.check(yaml_obj, yaml_file):
             LOG.warning("%s failed %s check" % (
                 yaml_file, ent_class.__name__))
             return False

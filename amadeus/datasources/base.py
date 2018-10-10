@@ -3,26 +3,24 @@ import logging
 
 import numpy as np
 import pandas as pd
-import yaml
+from ruamel import yaml
 
 from amadeus import constants
 from amadeus.datasources import cache
 from amadeus import utils
+from amadeus import yaml_object as yo
 
 
 LOG = logging.getLogger(__name__)
 
+TOP_LEVEL_KEY = 'datasource'
 
-class BaseDatasource(object):
+
+class BaseDatasource(yo.YAMLBackedObject):
     def __init__(self, yaml_file, conf, connection_manager):
         """Assumes that yaml_file is valid."""
-        self.yaml_file = yaml_file
-        self.filename = utils.basename(self.yaml_file)
-        self.conf = conf
+        super(BaseDatasource, self).__init__(yaml_file, conf, TOP_LEVEL_KEY)
         self.connection_manager = connection_manager
-        with open(yaml_file, 'r') as stream:
-            self.yaml_obj = yaml.load(stream)['datasource']
-        self.type = self.yaml_obj['type']
         self.defaults = self._gather_defaults()
         self.dtypes = self.yaml_obj.get('types', {})
         self.do_cache = True
@@ -150,21 +148,6 @@ class BaseDatasource(object):
         return "DS(%s:%s)" % (self.type, self.filename)
 
     @staticmethod
-    def check(yaml_obj):
-        if 'datasource' not in yaml_obj:
-            LOG.warning(
-                "Missing required 'datasource' top-level key "
-                "of file %s" % yaml_file)
-            return False
-        if 'type' not in yaml_obj['datasource']:
-            LOG.warning(
-                "Missing required 'type' 2nd-level key of file %s" %
-                yaml_file)
-            return False
-        ds_type = yaml_obj['datasource']['type']
-        if ds_type not in constants.DATASOURCE_TYPES:
-            LOG.warning("%s not a known datasource type from %s" %
-                (ds_type, yaml_file))
-            return False
-        return True
-
+    def check(yaml_obj, yaml_file, TOP_LEVEL_KEY):
+        return yo.YAMLBackedObject.check(
+            yaml_obj, yaml_file, constants.DATASOURCE_TYPES)

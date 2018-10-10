@@ -8,10 +8,10 @@ DATASOURCE_TYPES = [
     DS_SQL,
 ]
 
-PB_BASE = 'base'
+COMP_BASE = 'base'
 
-PLAYBOOK_TYPES = [
-    PB_BASE,
+COMPOSITION_TYPES = [
+    COMP_BASE,
 ]
 
 REDACT = '<REDACT>'
@@ -31,7 +31,7 @@ DEFAULT_REPORT_DIR = path_join(PROJECT_ROOT, 'reports')
 DEFAULT_SCRATCH_DIR = path_join(PROJECT_ROOT, 'scratch')
 DEFAULT_RESOURCE_DIR = path_join(PROJECT_ROOT, 'resources')
 DEFAULT_DATASOURCE_DIR = path_join(DEFAULT_RESOURCE_DIR, 'datasources')
-DEFAULT_PLAYBOOK_DIR = path_join(DEFAULT_RESOURCE_DIR, 'playbooks')
+DEFAULT_COMPOSITION_DIR = path_join(DEFAULT_RESOURCE_DIR, 'compositions')
 DEFAULT_BASE_CONF = path_join(PROJECT_ROOT, 'configuration')
 
 USER_HOME_DIR = path_join(user_dir(), '.amadeus')
