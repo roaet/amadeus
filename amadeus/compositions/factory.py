@@ -12,8 +12,8 @@ class CompositionFactory(object):
             return base.BaseComposition
         return None
 
-    def create(self, comp_type, yamlfile):
+    def create(self, comp_type, yaml_obj):
         comp = None
         if comp_type == constants.COMP_BASE:
-            return base.BaseComposition(yamlfile, self.conf)
+            return base.BaseComposition(yaml_obj, self.conf)
         return comp

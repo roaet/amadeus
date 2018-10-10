@@ -1,5 +1,6 @@
 ---
 composition:
+    name: test1
     type: base
     executor: local_linear
     movements:

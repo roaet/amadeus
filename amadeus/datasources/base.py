@@ -17,14 +17,12 @@ TOP_LEVEL_KEY = 'datasource'
 
 
 class BaseDatasource(yo.YAMLBackedObject):
-    def __init__(self, yaml_file, conf, connection_manager):
-        """Assumes that yaml_file is valid."""
-        super(BaseDatasource, self).__init__(yaml_file, conf, TOP_LEVEL_KEY)
+    def __init__(self, yaml_obj, conf, connection_manager):
+        super(BaseDatasource, self).__init__(yaml_obj, conf, TOP_LEVEL_KEY)
         self.connection_manager = connection_manager
         self.defaults = self._gather_defaults()
         self.dtypes = self.yaml_obj.get('types', {})
         self.do_cache = True
-        LOG.debug("Loading datasource from %s" % self.yaml_file)
 
     def purge_cache(self):
         cache_dir = self._cache_dir
@@ -43,7 +41,7 @@ class BaseDatasource(yo.YAMLBackedObject):
 
     @property
     def _cache_dir(self):
-        name = "%s_%s" % (self.filename, self.type)
+        name = "%s_%s" % (self.name, self.type)
         cache_dir = utils.path_join(constants.CACHE_DIR, name)
         return cache_dir
 
@@ -145,9 +143,9 @@ class BaseDatasource(yo.YAMLBackedObject):
         return self._cached_as_dataframe(**final)
 
     def __repr__(self):
-        return "DS(%s:%s)" % (self.type, self.filename)
+        return "DS(%s:%s)" % (self.type, self.name)
 
     @staticmethod
     def check(yaml_obj, yaml_file, TOP_LEVEL_KEY):
         return yo.YAMLBackedObject.check(
-            yaml_obj, yaml_file, constants.DATASOURCE_TYPES)
+            yaml_obj, yaml_file, TOP_LEVEL_KEY, constants.DATASOURCE_TYPES)

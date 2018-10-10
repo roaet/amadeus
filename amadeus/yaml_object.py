@@ -8,15 +8,12 @@ from amadeus import utils
 LOG = logging.getLogger(__name__)
 
 class YAMLBackedObject(object):
-    def __init__(self, yaml_file, conf, key):
-        """Assumes that yaml_file is valid."""
-        self.yaml_file = yaml_file
-        self.filename = utils.basename(self.yaml_file)
+    def __init__(self, yaml_obj, conf, key):
         self.conf = conf
-        with open(yaml_file, 'r') as stream:
-            self.original_yaml_obj = yaml.safe_load(stream)
+        self.original_yaml_obj = yaml_obj
         self.yaml_obj = self.original_yaml_obj[key]
         self.type = self.yaml_obj['type']
+        self.name = self.yaml_obj['name']
 
     @property
     def yamldump(self):
@@ -33,6 +30,11 @@ class YAMLBackedObject(object):
         if 'type' not in yaml_obj[key]:
             LOG.warning(
                 "Missing required 'type' 2nd-level key of file %s" %
+                yaml_file)
+            return False
+        if 'name' not in yaml_obj[key]:
+            LOG.warning(
+                "Missing required 'name' 2nd-level key of file %s" %
                 yaml_file)
             return False
         yo_type = yaml_obj[key]['type']

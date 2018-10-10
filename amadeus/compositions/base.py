@@ -17,14 +17,13 @@ TOP_LEVEL_KEY = 'composition'
 
 
 class BaseComposition(yo.YAMLBackedObject):
-    def __init__(self, yaml_file, conf):
-        """Assumes that yaml_file is valid."""
-        super(BaseComposition, self).__init__(yaml_file, conf, TOP_LEVEL_KEY)
+    def __init__(self, yaml_obj, conf):
+        super(BaseComposition, self).__init__(yaml_obj, conf, TOP_LEVEL_KEY)
 
     def __repr__(self):
-        return "COMP(%s:%s)" % (self.type, self.filename)
+        return "COMP(%s:%s)" % (self.type, self.name)
 
     @staticmethod
-    def check(yaml_obj, yaml_file):
+    def check(yaml_obj, yaml_file, key=None):
         return yo.YAMLBackedObject.check(
             yaml_obj, yaml_file, TOP_LEVEL_KEY, constants.COMPOSITION_TYPES)

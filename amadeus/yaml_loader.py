@@ -73,7 +73,8 @@ class YAMLLoader(object):
     def _does_yaml_have_basic_keys(self, yaml_file):
         with open(yaml_file, 'r') as stream:
             yaml_obj = yaml.safe_load(stream)
-        if not self.base_object_class.check(yaml_obj, yaml_file):
+        if not self.base_object_class.check(
+                yaml_obj, yaml_file, self.base_key):
             LOG.warning("%s failed basic check" % yaml_file)
             return False
         return True
@@ -123,6 +124,15 @@ class YAMLLoader(object):
                 entity_file, entity_name))
             return None
         ent_type = self.get_type_from_yaml(entity_file)
-        ent = self.factory.create(ent_type, entity_file)
+        with open(entity_file, 'r') as stream:
+            yaml_obj = yaml.safe_load(stream)
+        ent = self.factory.create(ent_type, yaml_obj)
         return ent
 
+    def load_entity_with_yaml_str(self, yaml_str):
+        return self.load_entity_with_yaml_obj(yaml.safe_load(yaml_str))
+
+    def load_entity_with_yaml_obj(self, yaml_obj):
+        ent_type = yaml_obj[self.base_key]['type']
+        ent = self.factory.create(ent_type, yaml_obj)
+        return ent

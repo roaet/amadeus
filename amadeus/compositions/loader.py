@@ -19,3 +19,6 @@ class CompositionLoader(object):
 
     def load_composition(self, comp_name):
         return self.loader.load_entity(comp_name)
+
+    def load_composition_str(self, comp_str):
+        return self.loader.load_entity_with_yaml_str(comp_str)

@@ -10,9 +10,9 @@ LOG = logging.getLogger(__name__)
 
 
 class SQLDatasource(base.BaseDatasource):
-    def __init__(self, yaml_file, conf, connection_manager):
+    def __init__(self, yaml_obj, conf, connection_manager):
         super(SQLDatasource, self).__init__(
-            yaml_file, conf, connection_manager)
+            yaml_obj, conf, connection_manager)
         self.query = self.yaml_obj['query']
         self.conf = conf
         self.connection_manager = connection_manager
@@ -47,7 +47,9 @@ class SQLDatasource(base.BaseDatasource):
         return df
 
     @staticmethod
-    def check(yaml_obj):
+    def check(yaml_obj, yaml_file):
+        base_check = base.BaseDatasource.check(
+            yaml_obj, yaml_file, base.TOP_LEVEL_KEY)
         required_keys = ['query']
         problems = 0
         for k in required_keys:

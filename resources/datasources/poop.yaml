@@ -1,5 +1,6 @@
 ---
 datasource:
+    name: poop
     type: sql
     connection_name: sa3_ods
     defaults:

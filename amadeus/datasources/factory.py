@@ -16,13 +16,13 @@ class DataSourceFactory(object):
             return sql_datasource.SQLDatasource
         return None
 
-    def create(self, ds_type, yamlfile):
+    def create(self, ds_type, yaml_obj):
         ds = None
         if ds_type == constants.DS_BASE:
             ds = base_datasource.BaseDatasource(
-                yamlfile, self.conf, self.connection_manager)
+                yaml_obj, self.conf, self.connection_manager)
         if ds_type == constants.DS_SQL:
             ds = sql_datasource.SQLDatasource(
-                yamlfile, self.conf, self.connection_manager)
+                yaml_obj, self.conf, self.connection_manager)
         return ds
 

@@ -27,6 +27,9 @@ class Conductor(runnable.Runnable):
 
     def recv(self, ch, method, props, body):
         LOG.debug(body)
+        CF = factory.CompositionFactory(self.conf)
+        CL = loader.CompositionLoader(self.conf, CF)
+        LOG.debug(CL.load_composition_str(body))
         self.bus.blocking_send('conductor', 'amadeus', 'test', "Hello")
         response = "Said hi to player"
         ch.basic_publish(
