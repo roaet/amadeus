@@ -2,13 +2,9 @@ import logging
 
 import click
 
-from amadeus.config import Configuration
-from amadeus.connections import manager
-from amadeus.datasources import factory
-from amadeus.datasources import loader
-from amadeus.logger import Logger
+from amadeus import action_factory as AF
 from amadeus import runnable
-from amadeus import utils
+from amadeus.statements import basic_extract
 
 
 LOG = logging.getLogger(__name__)
@@ -17,27 +13,21 @@ LOG = logging.getLogger(__name__)
 class RunExtract(runnable.Runnable):
     def __init__(self, debug, no_cache, purge):
         super(RunExtract, self).__init__(debug)
-        self.no_cache = no_cache
-        self.purge = purge
+        self.conf['no_cache'] = no_cache
+        self.conf['purge'] = purge
 
     def run(self, datasource, configuration):
-        LOG.debug('Running extract of %s' % datasource)
-        con_man = manager.ConnectionManager(self.conf)
-        fact = factory.DataSourceFactory(self.conf, con_man)
-        ds_loader = loader.DatasourceLoader(self.conf, fact)
-        if not ds_loader.has_datasource(datasource):
-            LOG.warning("Does not have datasource %s" % datasource)
+        af = AF.ActionFactory(self.conf)
+        """
+        Action = af.get_action('extract')
+        if Action is None:
+            LOG.debug("Could not find action")
             exit(1)
-        else:
-            LOG.debug("%s found" % datasource)
-
-        ds = ds_loader.load_datasource(datasource)
-        if self.purge:
-            ds.purge_cache()
-            exit(0)
-        ds.set_cache(not self.no_cache)
-        LOG.debug(ds.render_with_args(**configuration))
-        df = ds.as_dataframe(configuration)
+        Action(self.conf).run(datasource, configuration)
+        """
+        af('extract', 'poop', limit=10)
+        af('print', 'Hi there')
+        af('loop', 2)
 
 
 @click.command(context_settings={'ignore_unknown_options': True})

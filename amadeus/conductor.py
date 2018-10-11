@@ -25,6 +25,20 @@ class Conductor(runnable.Runnable):
         LOG.debug(body)
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
 
+    def sim(self, composition):
+        CF = factory.CompositionFactory(self.conf)
+        CL = loader.CompositionLoader(self.conf, CF)
+        if CL.has_composition(composition):
+            LOG.debug("Found composition")
+        else:
+            LOG.debug("Composition not found %s" % composition)
+
+        comp = CL.load_composition(composition)
+        if comp is None:
+            LOG.debug("Something wrong with composition %s" % composition)
+        LOG.debug(comp)
+        comp.run()
+
     def recv(self, ch, method, props, body):
         LOG.debug(body)
         CF = factory.CompositionFactory(self.conf)
@@ -52,3 +66,14 @@ class Conductor(runnable.Runnable):
 def run(debug, configurations):
     conf = runnable.parse_configurations(configurations)
     Conductor(debug).run(conf)
+
+
+@click.command(context_settings={'ignore_unknown_options': True})
+@click.option('--debug', is_flag=True,
+              help='Debug mode flag for development mode. '
+              'Sets logging to debug level')
+@click.argument('composition')
+@click.argument('configurations', nargs=-1)
+def simfsm(debug, composition, configurations):
+    conf = runnable.parse_configurations(configurations)
+    Conductor(debug).sim(composition)

@@ -33,6 +33,7 @@ DEFAULT_RESOURCE_DIR = path_join(PROJECT_ROOT, 'resources')
 DEFAULT_DATASOURCE_DIR = path_join(DEFAULT_RESOURCE_DIR, 'datasources')
 DEFAULT_COMPOSITION_DIR = path_join(DEFAULT_RESOURCE_DIR, 'compositions')
 DEFAULT_BASE_CONF = path_join(PROJECT_ROOT, 'configuration')
+ACTION_ROOT_SEARCH_DIR = path_join(PACKAGE_ROOT, 'statements')
 
 USER_HOME_DIR = path_join(user_dir(), '.amadeus')
 CACHE_DIR = path_join(USER_HOME_DIR, 'cache')
