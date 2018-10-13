@@ -3,10 +3,11 @@ import logging
 
 import numpy as np
 import pandas as pd
-import yaml
+import pyparsing as pp
 from ruamel import yaml
 
 from amadeus import constants
+from amadeus.compositions import parser
 from amadeus import utils
 from amadeus import action_factory as AF
 from amadeus import yaml_object as yo
@@ -37,6 +38,12 @@ class BaseStatement(object):
         return out
 
     def parse_arg_list(self):
+        P = parser.CompositionParser()
+        import ipdb; ipdb.set_trace()  # noqa
+        poo = arglist.parseString(self.original_definition)
+        pass
+
+    def _parse_arg_list(self):
         pieces = self.original_definition.split('(', 2)
         if len(pieces) == 1:  # no args
             return
@@ -112,7 +119,7 @@ class BaseComposition(yo.YAMLBackedObject):
         LOG.debug(self.vars)
 
     def _parse_main(self):
-        root_stmt = BaseStatement('main', self.conf, self.vars)
+        root_stmt = BaseStatement('main()', self.conf, self.vars)
         main = self.yaml_obj.get('main')
         self._parse_node(root_stmt, main)
         return root_stmt

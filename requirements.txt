@@ -5,6 +5,7 @@ ruamel.yaml
 yamllint
 sqlalchemy
 pandas
+pyparsing
 pyodbc
 pika
 transitions
