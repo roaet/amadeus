@@ -1,6 +1,6 @@
 import logging
 
-from amadeus import action_factory
+from amadeus.actions import factory as action_factory
 
 
 LOG = logging.getLogger(__name__)
@@ -19,7 +19,6 @@ class BaseStatement(object):
         LOG.debug("Running %s with %s" % (self.method, self.args))
 
         kwargs = {'returns': self.returns}
-        
         self.AF(self.method, *self.args, **kwargs)
         for stmt in self.substatements:
             stmt.run()

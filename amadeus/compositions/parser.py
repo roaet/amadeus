@@ -14,7 +14,7 @@ from pyparsing import Optional
 from pyparsing import Suppress
 from pyparsing import Word
 
-from amadeus import action_factory
+from amadeus.actions import factory as action_factory
 from amadeus.compositions.statements import factory as stmt_factory
 
 

@@ -17,11 +17,11 @@ class EYAMLParserTest(base.AmadeusTestBase):
 
     def setup_mocks(self, fx_info_dict):
         af_mock_has = self.create_patch(
-            'amadeus.action_factory.ActionFactory.has_action')
+            'amadeus.actions.factory.ActionFactory.has_action')
         af_mock_has.side_effect = lambda x: x in fx_info_dict
 
         af_mock_get = self.create_patch(
-            'amadeus.action_factory.ActionFactory.get_action')
+            'amadeus.actions.factory.ActionFactory.get_action')
 
         fake_actions = {}
         for fx_name, args in fx_info_dict.iteritems():

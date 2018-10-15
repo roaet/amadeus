@@ -1,6 +1,6 @@
 import logging
 
-from amadeus import action_factory
+from amadeus.actions import factory as action_factory
 from amadeus import constants
 from amadeus.compositions import parser
 from amadeus.compositions.statements import base

@@ -2,7 +2,7 @@ import logging
 
 import click
 
-from amadeus import action_factory as AF
+from amadeus.actions import factory as action_factory
 from amadeus.entries import runnable
 
 
@@ -16,17 +16,17 @@ class RunExtract(runnable.Runnable):
         self.conf['purge'] = purge
 
     def run(self, datasource, conf):
-        af = AF.ActionFactory(self.conf)
+        AF = action_factory.ActionFactory(self.conf)
         """
-        Action = af.get_action('extract')
+        Action = AF.get_action('extract')
         if Action is None:
             LOG.debug("Could not find action")
             exit(1)
         Action(self.conf).run(datasource, conf)
         """
-        af('extract', 'poop', limit=10)
-        af('print', 'Hi there')
-        af('loop', 2)
+        AF('extract', 'poop', limit=10)
+        AF('print', 'Hi there')
+        AF('loop', 2)
 
 
 @click.command(context_settings={'ignore_unknown_options': True})
