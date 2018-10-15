@@ -1,6 +1,6 @@
 import logging
 
-from amadeus.statements.basic import base_action as base
+from amadeus.actions.basic import base_action as base
 
 
 LOG = logging.getLogger(__name__)

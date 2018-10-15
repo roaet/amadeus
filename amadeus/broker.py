@@ -50,61 +50,6 @@ class AMQPBroker(object):
         self._initialize()
         self.connections = {}
 
-    def _configure_exchanges(self, channel):
-        amqp_exchanges = self.conf.get('AMQP_EXCHANGES', [])
-        for name, params in amqp_exchanges.iteritems():
-            method = params[0]
-            durable = params[1] == 'yes'
-            channel.exchange_declare(
-                exchange=name, exchange_type=method, durable=durable)
-            self.configured_exchanges.append(name)
-
-    def _configure_queues(self, channel):
-        amqp_queues = self.conf.get('AMQP_QUEUES', [])
-        queue_params = ['exchange', 'durable', 'routing_key']
-        for name, params in amqp_queues.iteritems():
-            if len(params) != len(queue_params):
-                LOG.error("Queue params for %s are wrong" % name)
-            exchange = '' if params[0] == 'default' else params[0]
-            durable = params[1] == 'yes'
-            routing_key = '' if params[2] == 'none' else params[2]
-            channel.queue_declare(queue=name, durable=durable)
-            if exchange != '':
-                channel.queue_bind(
-                    exchange=exchange, queue=name, routing_key=routing_key)
-
-    def _initialize(self):
-        if 'AMQP' not in self.conf:
-            raise exc.ConfigError("Missing AMQP key in configuration")
-        amqp_conf = self.conf.get('AMQP')
-        subkeys = ['server', 'port', 'path', 'username' , 'password']
-        if any(x not in amqp_conf for x in subkeys):
-            raise exc.ConfigError(
-                "Missing required AMQP keys in configuration")
-        server, port, path, username, password = tuple(
-            [amqp_conf.get(x) for x in subkeys])
-        creds = pika.PlainCredentials(username, password)
-        self.parameters = pika.ConnectionParameters(server, port, path, creds)
-
-    def _delete_connection(self, name):
-        if name not in self.connections:
-            return
-        try:
-            self.connections[name].close()
-        except Exception:
-            pass
-        finally:
-            del self.connections[name]
-
-    def _create_connection(self, name):
-        self._delete_connection(name)
-        connection = pika.BlockingConnection(parameters=self.parameters)
-        self.connections[name] = connection
-        channel = connection.channel()
-        self._configure_exchanges(channel)
-        self._configure_queues(channel)
-        return connection, channel
-
     def rpc_listen(
             self, connection_name, routing_key, fx):
         connection, channel = self._create_connection(connection_name)
@@ -137,3 +82,58 @@ class AMQPBroker(object):
         except KeyboardInterrupt:
             channel.stop_consuming()
         self._delete_connection(connection_name)
+
+    def _configure_exchanges(self, channel):
+        amqp_exchanges = self.conf.get('AMQP_EXCHANGES', [])
+        for name, params in amqp_exchanges.iteritems():
+            method = params[0]
+            durable = params[1] == 'yes'
+            channel.exchange_declare(
+                exchange=name, exchange_type=method, durable=durable)
+            self.configured_exchanges.append(name)
+
+    def _configure_queues(self, channel):
+        amqp_queues = self.conf.get('AMQP_QUEUES', [])
+        queue_params = ['exchange', 'durable', 'routing_key']
+        for name, params in amqp_queues.iteritems():
+            if len(params) != len(queue_params):
+                LOG.error("Queue params for %s are wrong" % name)
+            exchange = '' if params[0] == 'default' else params[0]
+            durable = params[1] == 'yes'
+            routing_key = '' if params[2] == 'none' else params[2]
+            channel.queue_declare(queue=name, durable=durable)
+            if exchange != '':
+                channel.queue_bind(
+                    exchange=exchange, queue=name, routing_key=routing_key)
+
+    def _initialize(self):
+        if 'AMQP' not in self.conf:
+            raise exc.ConfigError("Missing AMQP key in configuration")
+        amqp_conf = self.conf.get('AMQP')
+        subkeys = ['server', 'port', 'path', 'username', 'password']
+        if any(x not in amqp_conf for x in subkeys):
+            raise exc.ConfigError(
+                "Missing required AMQP keys in configuration")
+        server, port, path, username, password = tuple(
+            [amqp_conf.get(x) for x in subkeys])
+        creds = pika.PlainCredentials(username, password)
+        self.parameters = pika.ConnectionParameters(server, port, path, creds)
+
+    def _delete_connection(self, name):
+        if name not in self.connections:
+            return
+        try:
+            self.connections[name].close()
+        except Exception:
+            pass
+        finally:
+            del self.connections[name]
+
+    def _create_connection(self, name):
+        self._delete_connection(name)
+        connection = pika.BlockingConnection(parameters=self.parameters)
+        self.connections[name] = connection
+        channel = connection.channel()
+        self._configure_exchanges(channel)
+        self._configure_queues(channel)
+        return connection, channel

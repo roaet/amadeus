@@ -1,5 +1,4 @@
 import logging
-import zipfile
 
 import pandas as pd
 
@@ -16,7 +15,7 @@ class CacheObject(object):
 
     def exists(self):
         return utils.does_file_exist(self.zip_filename)
-    
+
     def write(self, df):
         """
         Create directory with filename

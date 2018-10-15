@@ -12,6 +12,10 @@ class Configuration(object):
         self._check_directory_sanity()
         self._configure()
 
+    @property
+    def config(self):
+        return self._conf
+
     def _check_directory_sanity(self):
         checks = [
             constants.USER_HOME_DIR,
@@ -57,7 +61,3 @@ class Configuration(object):
         self.config_path = found_config
         self._conf = conf
         self._get_directory_info()
-
-    @property
-    def config(self):
-        return self._conf

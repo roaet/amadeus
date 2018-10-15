@@ -4,12 +4,9 @@ import click
 import pika
 
 from amadeus import broker
-from amadeus.config import Configuration
 from amadeus.compositions import factory
 from amadeus.compositions import loader
-from amadeus.logger import Logger
 from amadeus import runnable
-from amadeus import utils
 
 
 LOG = logging.getLogger(__name__)
@@ -19,11 +16,6 @@ class Conductor(runnable.Runnable):
     def __init__(self, debug):
         super(Conductor, self).__init__(debug)
         self.bus = broker.AMQPBroker(self.conf)
-
-    def _on_message(self, channel, method_frame, header_frame, body):
-        LOG.debug(method_frame.delivery_tag)
-        LOG.debug(body)
-        channel.basic_ack(delivery_tag=method_frame.delivery_tag)
 
     def sim(self, composition):
         CF = factory.CompositionFactory(self.conf)
@@ -57,6 +49,11 @@ class Conductor(runnable.Runnable):
     def run(self, configuration):
         self.bus.rpc_listen('rpc_test', 'amacontrol_rpc', self.recv)
 
+    def _on_message(self, channel, method_frame, header_frame, body):
+        LOG.debug(method_frame.delivery_tag)
+        LOG.debug(body)
+        channel.basic_ack(delivery_tag=method_frame.delivery_tag)
+
 
 @click.command(context_settings={'ignore_unknown_options': True})
 @click.option('--debug', is_flag=True,
@@ -75,5 +72,5 @@ def run(debug, configurations):
 @click.argument('composition')
 @click.argument('configurations', nargs=-1)
 def simfsm(debug, composition, configurations):
-    conf = runnable.parse_configurations(configurations)
+    runnable.parse_configurations(configurations)
     Conductor(debug).sim(composition)

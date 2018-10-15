@@ -18,8 +18,7 @@ class ConnectionManager(object):
 
     def _construct_constr(self, server, username, password, db):
         return DB_CON_FORMAT % (
-                server, DEFAULT_PORT, username, password, db
-            )
+            server, DEFAULT_PORT, username, password, db)
 
     def _get_constr_by_name(self, name):
         if name in self.conf and 'connection_string' in self.conf.get(name):

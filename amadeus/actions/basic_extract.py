@@ -3,7 +3,7 @@ import logging
 from amadeus.connections import manager
 from amadeus.datasources import factory
 from amadeus.datasources import loader
-from amadeus.statements.basic import base_action as base
+from amadeus.actions.basic import base_action as base
 
 
 LOG = logging.getLogger(__name__)
@@ -35,4 +35,4 @@ class Extract(base.BaseAction):
             exit(0)
         ds.set_cache(not self.no_cache)
         LOG.debug(ds.render_with_args(**configuration))
-        df = ds.as_dataframe(configuration)
+        ds.as_dataframe(configuration)

@@ -1,13 +1,7 @@
 import logging
 
-import click
-
 from amadeus.config import Configuration
-from amadeus.datasources import factory
-from amadeus.datasources import loader
 from amadeus.logger import Logger
-from amadeus.connections import manager
-from amadeus import utils
 
 
 LOG = logging.getLogger(__name__)

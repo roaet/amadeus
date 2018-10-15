@@ -2,7 +2,6 @@ import logging
 
 import jinja2
 
-from amadeus import constants
 from amadeus.datasources import base
 
 
@@ -48,8 +47,7 @@ class SQLDatasource(base.BaseDatasource):
 
     @staticmethod
     def check(yaml_obj, yaml_file):
-        base_check = base.BaseDatasource.check(
-            yaml_obj, yaml_file, base.TOP_LEVEL_KEY)
+        base.BaseDatasource.check(yaml_obj, yaml_file, base.TOP_LEVEL_KEY)
         required_keys = ['query']
         problems = 0
         for k in required_keys:
@@ -65,4 +63,3 @@ class SQLDatasource(base.BaseDatasource):
         if problems > 0:
             return False
         return True
-

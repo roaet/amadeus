@@ -1,7 +1,6 @@
 import logging
 
 import click
-import pika
 
 from amadeus import broker
 from amadeus import runnable

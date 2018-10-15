@@ -2,14 +2,14 @@ import importlib
 import inspect
 import logging
 import pkgutil
-import sys
 
 from amadeus import constants
-from amadeus import statements as stmt
-from amadeus.statements.basic import base_action
+from amadeus import actions as acts
+from amadeus.actions.basic import base_action
 
 
 LOG = logging.getLogger(__name__)
+
 
 class ActionFactory(object):
     def __init__(self, configuration):
@@ -17,10 +17,18 @@ class ActionFactory(object):
         self.conf = configuration
         self._define_actions()
 
+    def has_action(self, action_name):
+        return action_name in self.actions
+
+    def get_action(self, action_name):
+        if action_name not in self.actions:
+            return None
+        return self.actions[action_name]
+
     def _define_actions(self):
         LOG.debug(
             "Search root starting at: %s" % constants.ACTION_ROOT_SEARCH_DIR)
-        res = self._import_submodules(stmt)
+        res = self._import_submodules(acts)
         for name, mod in res.iteritems():
             clsmembers = inspect.getmembers(mod, inspect.isclass)
             for name, cls in clsmembers:
@@ -39,14 +47,6 @@ class ActionFactory(object):
             if recursive and is_pkg:
                 results.update(self._import_submodules(full_name))
         return results
-
-    def has_action(self, action_name):
-        return action_name in self.actions
-
-    def get_action(self, action_name):
-        if action_name not in self.actions:
-            return None
-        return self.actions[action_name]
 
     def __call__(self, action, *args, **kwargs):
         if action not in self.actions:

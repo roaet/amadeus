@@ -4,7 +4,6 @@ import click
 
 from amadeus import action_factory as AF
 from amadeus import runnable
-from amadeus.statements import basic_extract
 
 
 LOG = logging.getLogger(__name__)

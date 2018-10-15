@@ -3,7 +3,6 @@ import logging
 
 import numpy as np
 import pandas as pd
-from ruamel import yaml
 
 from amadeus import constants
 from amadeus.datasources import cache
@@ -56,7 +55,7 @@ class BaseDatasource(yo.YAMLBackedObject):
         filename = self._generate_cache_filename(**configuration)
         abs_filepath = utils.path_join(self._cache_dir, filename)
         return abs_filepath
-    
+
     def _set_types(self, df_in):
         df = df_in.copy()
         for col in df.columns:

@@ -1,7 +1,6 @@
 import logging
 
 import click
-import pika
 
 from amadeus import broker
 from amadeus.compositions.factory import CompositionFactory
@@ -16,12 +15,6 @@ class Client(runnable.Runnable):
     def __init__(self, composition, debug):
         super(Client, self).__init__(debug)
         self.composition = composition
-        self.bus = broker.AMQPBroker(self.conf)
-
-    def _on_message(self, channel, method_frame, header_frame, body):
-        LOG.debug(method_frame.delivery_tag)
-        LOG.debug(body)
-        channel.basic_ack(delivery_tag=method_frame.delivery_tag)
 
     def run(self, configuration):
         CF = CompositionFactory(self.conf)
@@ -34,9 +27,8 @@ class Client(runnable.Runnable):
         comp = CL.load_composition(self.composition)
         if comp is None:
             LOG.debug("Something wrong with composition %s" % self.composition)
-        response = self.bus.rpc_send(
-            'rpc_testing', 'amacontrol_rpc', comp.yamldump)
-        LOG.debug(response)
+        self.bus.rpc_send('rpc_testing', 'amacontrol_rpc', comp.yamldump)
+        self.bus = broker.AMQPBroker(self.conf)
 
 
 @click.command(context_settings={'ignore_unknown_options': True})

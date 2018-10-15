@@ -53,7 +53,7 @@ class SqlalchemyConnection():
                 return dataframe
             except saexc.ProgrammingError as e:
                 e_str = str(e).replace('\\n', '\n')
-                if i == max_retry -1:
+                if i == max_retry - 1:
                     LOG.debug('Error: Giving up. %s' % e_str)
                 else:
                     LOG.debug('Possible deadlock. Retrying.')
@@ -73,7 +73,7 @@ class SqlalchemyConnection():
         eng = self._create_engine(connect_str)
         try:
             con = eng.connect()
-        except (saexc.DBAPIError, saexc.ProgrammingError) as e:
+        except (saexc.DBAPIError, saexc.ProgrammingError):
             LOG.error("Failed to connect")
             raise exc.ConnectionFailed()
         return con

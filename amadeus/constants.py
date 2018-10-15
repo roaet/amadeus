@@ -1,4 +1,10 @@
-from amadeus.utils import *
+import os
+
+from amadeus.utils import abs_path_for_file
+from amadeus.utils import dir_name
+from amadeus.utils import get_cwd
+from amadeus.utils import path_join
+from amadeus.utils import user_dir
 
 DS_BASE = 'base'
 DS_SQL = 'sql'

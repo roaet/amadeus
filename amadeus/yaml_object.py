@@ -2,10 +2,9 @@ import logging
 
 from ruamel import yaml
 
-from amadeus import utils
-
 
 LOG = logging.getLogger(__name__)
+
 
 class YAMLBackedObject(object):
     def __init__(self, yaml_obj, conf, key):
@@ -39,7 +38,7 @@ class YAMLBackedObject(object):
             return False
         yo_type = yaml_obj[key]['type']
         if yo_type not in types:
-            LOG.warning("%s not a known %s type from %s" %
-                (yo_type, key, yaml_file))
+            LOG.warning(
+                "%s not a known %s type from %s" % (yo_type, key, yaml_file))
             return False
         return True
