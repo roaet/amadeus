@@ -41,7 +41,7 @@ Architecture:
 - (arch) Data Storage
     - In Design
 
-##Composition
+## Composition
 
 A composition is an EYAML (extended-YAML) format that is read by conductors to
 control the work done by the players.
