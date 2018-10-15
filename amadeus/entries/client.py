@@ -5,7 +5,7 @@ import click
 from amadeus import broker
 from amadeus.compositions.factory import CompositionFactory
 from amadeus.compositions.loader import CompositionLoader
-from amadeus import runnable
+from amadeus.entries import runnable
 
 
 LOG = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ class Client(runnable.Runnable):
         super(Client, self).__init__(debug)
         self.composition = composition
 
-    def run(self, configuration):
+    def run(self, conf):
         CF = CompositionFactory(self.conf)
         CL = CompositionLoader(self.conf, CF)
         if CL.has_composition(self.composition):

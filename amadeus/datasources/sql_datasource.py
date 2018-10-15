@@ -25,25 +25,25 @@ class SQLDatasource(base.BaseDatasource):
         s = super(SQLDatasource, self).__repr__()
         return "%s-%s:%s" % (s, self.connection, self.query)
 
-    def _render(self, **configuration):
+    def _render(self, **conf):
         template = jinja2.Template(self.query)
-        return template.render(**configuration)
+        return template.render(**conf)
 
-    def _hash_seed(self, **configuration):
-        return "%s_%s_%s" % (self.connection, self.query, str(configuration))
+    def _hash_seed(self, **conf):
+        return "%s_%s_%s" % (self.connection, self.query, str(conf))
 
-    def _get_data(self, **configuration):
+    def _get_data(self, **conf):
         con_str = self.yaml_obj.get('connection_string', None)
         con_name = self.yaml_obj.get('connection_name', None)
         connection = self.connection_manager.get_connection(con_name, con_str)
-        df = connection.query_to_df(self.render_with_args(**configuration))
+        df = connection.query_to_df(self.render_with_args(**conf))
         return df
 
-    def render_with_args(self, **configuration):
-        if configuration is None or not configuration:
-            configuration = self.defaults
+    def render_with_args(self, **conf):
+        if conf is None or not conf:
+            conf = self.defaults
 
-        return self._render(**configuration)
+        return self._render(**conf)
 
     @staticmethod
     def check(yaml_obj, yaml_file):

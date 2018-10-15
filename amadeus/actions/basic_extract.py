@@ -13,13 +13,15 @@ class Extract(base.BaseAction):
     cmd = 'extract'
     args = ['str']
 
-    def __init__(self, configuration):
-        super(Extract, self).__init__(configuration)
+    def __init__(self, conf):
+        super(Extract, self).__init__(conf)
         self.purge = self.conf.get('purge', False)
         self.no_cache = self.conf.get('no_cache', False)
 
-    def run(self, datasource, **configuration):
+    def run(self, datasource, **conf):
+        super(Extract, self).run(**conf)
         LOG.debug('Running extract of %s' % datasource)
+
         con_man = manager.ConnectionManager(self.conf)
         fact = factory.DataSourceFactory(self.conf, con_man)
         ds_loader = loader.DatasourceLoader(self.conf, fact)
@@ -34,5 +36,6 @@ class Extract(base.BaseAction):
             ds.purge_cache()
             exit(0)
         ds.set_cache(not self.no_cache)
-        LOG.debug(ds.render_with_args(**configuration))
-        ds.as_dataframe(configuration)
+        LOG.debug(ds.render_with_args(**conf))
+        ds.as_dataframe(conf)
+        # TODO(roaet): need to output to shared storage

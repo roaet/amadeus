@@ -6,7 +6,7 @@ import pika
 from amadeus import broker
 from amadeus.compositions import factory
 from amadeus.compositions import loader
-from amadeus import runnable
+from amadeus.entries import runnable
 
 
 LOG = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ class Conductor(runnable.Runnable):
             body=response)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    def run(self, configuration):
+    def run(self, conf):
         self.bus.rpc_listen('rpc_test', 'amacontrol_rpc', self.recv)
 
     def _on_message(self, channel, method_frame, header_frame, body):

@@ -37,22 +37,22 @@ class BaseDatasource(yo.YAMLBackedObject):
             utils.make_directory(self._cache_dir)
             LOG.debug("Made cache directory %s" % self._cache_dir)
 
-    def _hash_seed(self, **configuration):
-        return str(configuration)
+    def _hash_seed(self, **conf):
+        return str(conf)
 
-    def _generate_df_suffix_from_conf(self, **configuration):
-        if not configuration:
+    def _generate_df_suffix_from_conf(self, **conf):
+        if not conf:
             return "0" * 32
-        hash_arg = self._hash_seed(**configuration)
+        hash_arg = self._hash_seed(**conf)
         suffix = hashlib.md5(hash_arg).hexdigest()
         return suffix
 
-    def _generate_cache_filename(self, **configuration):
-        suffix = self._generate_df_suffix_from_conf(**configuration)
+    def _generate_cache_filename(self, **conf):
+        suffix = self._generate_df_suffix_from_conf(**conf)
         return "cache_%s" % suffix
 
-    def _target_cache_file(self, **configuration):
-        filename = self._generate_cache_filename(**configuration)
+    def _target_cache_file(self, **conf):
+        filename = self._generate_cache_filename(**conf)
         abs_filepath = utils.path_join(self._cache_dir, filename)
         return abs_filepath
 
@@ -86,42 +86,42 @@ class BaseDatasource(yo.YAMLBackedObject):
         LOG.debug("Set types: %s" % df.dtypes)
         return df
 
-    def _create_target_filename(self, **configuration):
+    def _create_target_filename(self, **conf):
         self._create_cache_directory()
-        return self._target_cache_file(**configuration)
+        return self._target_cache_file(**conf)
 
-    def _hascache(self, **configuration):
+    def _hascache(self, **conf):
         if not self.do_cache:
             return False
-        filename = self._create_target_filename(**configuration)
+        filename = self._create_target_filename(**conf)
         cache_obj = cache.CacheObject(filename)
         return cache_obj.exists()
 
-    def _precache(self, **configuration):
-        filename = self._create_target_filename(**configuration)
+    def _precache(self, **conf):
+        filename = self._create_target_filename(**conf)
         return self._load_from_cache(filename)
 
-    def _postcache(self, df, **configuration):
+    def _postcache(self, df, **conf):
         if df is None or len(df) == 0:
             return None
-        filename = self._create_target_filename(**configuration)
+        filename = self._create_target_filename(**conf)
         self._write_cache(filename, df)
         return self._load_from_cache(filename)
 
-    def _get_data(self, **configuration):
+    def _get_data(self, **conf):
         return pd.DataFrame([])
 
-    def _cached_as_dataframe(self, **configuration):
-        if self._hascache(**configuration):
-            return self._precache(**configuration)
+    def _cached_as_dataframe(self, **conf):
+        if self._hascache(**conf):
+            return self._precache(**conf)
 
-        df = self._get_data(**configuration)
+        df = self._get_data(**conf)
 
-        return self._postcache(df, **configuration)
+        return self._postcache(df, **conf)
 
-    def _merge_defaults(self, configuration):
+    def _merge_defaults(self, conf):
         final = self.defaults.copy()
-        for k, v in configuration.iteritems():
+        for k, v in conf.iteritems():
             final[k] = v
         return final
 
@@ -140,8 +140,8 @@ class BaseDatasource(yo.YAMLBackedObject):
     def set_cache(self, flag):
         self.do_cache = flag
 
-    def as_dataframe(self, configuration):
-        final = self._merge_defaults(configuration)
+    def as_dataframe(self, conf):
+        final = self._merge_defaults(conf)
         return self._cached_as_dataframe(**final)
 
     @staticmethod

@@ -7,8 +7,10 @@ LOG = logging.getLogger(__name__)
 
 
 class LoopStatement(base.BaseStatement):
-    def __init__(self, definition, conf, parameters):
-        super(LoopStatement, self).__init__(definition, conf, parameters)
+    args = ['int']
+
+    def __init__(self, conf, method, args, returns):
+        super(LoopStatement, self).__init__(conf, method, args, returns)
 
     def run(self):
         try:  # attempt integer loop

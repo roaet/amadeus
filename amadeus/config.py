@@ -3,6 +3,7 @@ import sys
 from configobj import ConfigObj
 from amadeus import constants
 from amadeus import exceptions as exc
+from amadeus import utils
 
 
 class Configuration(object):
@@ -26,8 +27,8 @@ class Configuration(object):
             constants.DEFAULT_COMPOSITION_DIR,
         ]
         for directory in checks:
-            if not constants.does_directory_exist(directory):
-                constants.make_directory(directory)
+            if not utils.does_directory_exist(directory):
+                utils.make_directory(directory)
 
     def _get_directory_info(self):
         return [
@@ -49,7 +50,7 @@ class Configuration(object):
     def _configure(self):
         found_config = None
         for path in constants.DEFAULT_CONF_DIRS:
-            if constants.does_file_exist(path):
+            if utils.does_file_exist(path):
                 found_config = path
                 break
 

@@ -3,7 +3,7 @@ import logging
 import click
 
 from amadeus import broker
-from amadeus import runnable
+from amadeus.entries import runnable
 
 
 LOG = logging.getLogger(__name__)
@@ -19,9 +19,9 @@ class Player(runnable.Runnable):
         LOG.debug(body)
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
 
-    def run(self, configuration):
+    def run(self, conf):
         self.bus.blocking_listen(
-            'player', configuration, 'test', self._on_message)
+            'player', conf, 'test', self._on_message)
 
 
 @click.command(context_settings={'ignore_unknown_options': True})

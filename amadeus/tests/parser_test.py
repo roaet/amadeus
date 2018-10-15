@@ -49,6 +49,7 @@ class EYAMLParserTest(base.AmadeusTestBase):
     def test_expected_successes(self):
         self.setup_mocks({'known_fx': ['str']})
         self.is_good("known_fx('asdf')")
+        self.is_good("known_fx('asdf'):")
         self.is_good("known_fx('asdf') => ret")
         self.is_good("known_fx(ret) => ret2")
 

@@ -10,19 +10,8 @@ class Print(base.BaseAction):
     cmd = 'print'
     args = ['str']
 
-    def __init__(self, configuration):
-        super(Print, self).__init__(configuration)
+    def __init__(self, conf):
+        super(Print, self).__init__(conf)
 
-    def run(self, message, **configuration):
-        LOG.debug('print: %s' % message)
-
-
-class Loop(base.BaseAction):
-    cmd = 'loop'
-    args = ['int']
-
-    def __init__(self, configuration):
-        super(Loop, self).__init__(configuration)
-
-    def run(self, n, **configuration):
-        LOG.debug('would loop: %d times' % n)
+    def run(self, message, **conf):
+        LOG.info('AMADEUS: %s' % message)

@@ -12,9 +12,9 @@ LOG = logging.getLogger(__name__)
 
 
 class ActionFactory(object):
-    def __init__(self, configuration):
+    def __init__(self, conf):
         self.actions = {}
-        self.conf = configuration
+        self.conf = conf
         self._define_actions()
 
     def has_action(self, action_name):

@@ -3,7 +3,7 @@ import logging
 import click
 
 from amadeus import action_factory as AF
-from amadeus import runnable
+from amadeus.entries import runnable
 
 
 LOG = logging.getLogger(__name__)
@@ -15,14 +15,14 @@ class RunExtract(runnable.Runnable):
         self.conf['no_cache'] = no_cache
         self.conf['purge'] = purge
 
-    def run(self, datasource, configuration):
+    def run(self, datasource, conf):
         af = AF.ActionFactory(self.conf)
         """
         Action = af.get_action('extract')
         if Action is None:
             LOG.debug("Could not find action")
             exit(1)
-        Action(self.conf).run(datasource, configuration)
+        Action(self.conf).run(datasource, conf)
         """
         af('extract', 'poop', limit=10)
         af('print', 'Hi there')

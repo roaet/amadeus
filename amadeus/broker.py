@@ -74,7 +74,7 @@ class AMQPBroker(object):
         self._delete_connection(connection_name)
 
     def blocking_listen(
-            self, connection_name, configuration, routing_key, fx):
+            self, connection_name, conf, routing_key, fx):
         connection, channel = self._create_connection(connection_name)
         channel.basic_consume(fx, routing_key)
         try:
