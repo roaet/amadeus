@@ -24,18 +24,6 @@ class BaseDatasource(yo.YAMLBackedObject):
         self.dtypes = self.yaml_obj.get('types', {})
         self.do_cache = True
 
-    def purge_cache(self):
-        cache_dir = self._cache_dir
-        try:
-            utils.rmtree(cache_dir)
-        except OSError:
-            LOG.info("Nothing happened")
-            return False
-        return True
-
-    def set_cache(self, flag):
-        self.do_cache = flag
-
     def _gather_defaults(self):
         return self.yaml_obj.get('defaults', {})
 
@@ -138,12 +126,24 @@ class BaseDatasource(yo.YAMLBackedObject):
             final[k] = v
         return final
 
+    def __repr__(self):
+        return "DS(%s:%s)" % (self.type, self.name)
+
+    def purge_cache(self):
+        cache_dir = self._cache_dir
+        try:
+            utils.rmtree(cache_dir)
+        except OSError:
+            LOG.info("Nothing happened")
+            return False
+        return True
+
+    def set_cache(self, flag):
+        self.do_cache = flag
+
     def as_dataframe(self, configuration):
         final = self._merge_defaults(configuration)
         return self._cached_as_dataframe(**final)
-
-    def __repr__(self):
-        return "DS(%s:%s)" % (self.type, self.name)
 
     @staticmethod
     def check(yaml_obj, yaml_file, TOP_LEVEL_KEY):

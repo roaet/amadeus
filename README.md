@@ -9,4 +9,39 @@ on the original intent has manifested, as per norm, to muddle the mixture.
 Despite possible deviations the current MVP of Amadeus only knows about data
 and the processes that can be run on it -- quickly.
 
->> Gotta go fast
+> Gotta go fast
+
+## Development Status
+
+Compositions:
+- (noun) Composition
+    - Core Developing
+    - EYAML Lexer in Progress
+- (noun) Data Source
+    - Core Developed
+    - Needs Auth
+- (verb) Action 
+    - Core Developed
+    - Needs Auth
+- (verb-ish?) Basic Statement
+    - Core Developed
+    - Loops and Branching in design
+
+Members:
+- (member) Conductor
+    - Core Developing
+    - 'Teach' in Design
+- (member) Player
+    - Core Developing
+    - 'Learn' in Design
+
+Architecture:
+- (arch) BUS(RabbitMQ)
+    - Implemented, Needs Hardening
+- (arch) Data Storage
+    - In Design
+
+##Composition
+
+A composition is an EYAML (extended-YAML) format that is read by conductors to
+control the work done by the players.

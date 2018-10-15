@@ -33,18 +33,18 @@ class SQLDatasource(base.BaseDatasource):
     def _hash_seed(self, **configuration):
         return "%s_%s_%s" % (self.connection, self.query, str(configuration))
 
-    def render_with_args(self, **configuration):
-        if configuration is None or not configuration:
-            configuration = self.defaults
-
-        return self._render(**configuration)
-
     def _get_data(self, **configuration):
         con_str = self.yaml_obj.get('connection_string', None)
         con_name = self.yaml_obj.get('connection_name', None)
         connection = self.connection_manager.get_connection(con_name, con_str)
         df = connection.query_to_df(self.render_with_args(**configuration))
         return df
+
+    def render_with_args(self, **configuration):
+        if configuration is None or not configuration:
+            configuration = self.defaults
+
+        return self._render(**configuration)
 
     @staticmethod
     def check(yaml_obj, yaml_file):

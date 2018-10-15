@@ -57,5 +57,3 @@ class ActionFactory(object):
             LOG.debug("Incorrect arg count")
             return None
         inst.run(*args, **kwargs)
-
-

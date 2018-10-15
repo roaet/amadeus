@@ -15,10 +15,10 @@ class CompositionParser(object):
         self.AF = action_factory.ActionFactory(self.conf)
         self._reset_containers()
         self._known_identifiers = set([])
+        self._preload_known_identifiers()
+        self._define_grammar()
 
-        for k, v in self.conf.iteritems():
-            self._known_identifiers.add(k)
-
+    def _define_grammar(self):
         quotedString = pp.sglQuotedString | pp.dblQuotedString
         identifier = (
             pp.Word( pp.alphas + '_', pp.alphanums + '_' ).setParseAction(
@@ -43,11 +43,13 @@ class CompositionParser(object):
 
         self.bnf = statementWithReturn
 
-    def forget(self):
-        self._known_identifiers = set([])
-
+    def _preload_known_identifiers(self):
         for k, v in self.conf.iteritems():
             self._known_identifiers.add(k)
+
+    def forget(self):
+        self._known_identifiers = set([])
+        self._preload_known_identifiers()
 
     def _reset_containers(self):
         self.method = None
@@ -93,29 +95,31 @@ class CompositionParser(object):
         }
 
 
+
 class ParserTester(runnable.Runnable):
     def __init__(self):
         super(ParserTester, self).__init__(False)
+        self.checks = ["""
+extract()
+fx2("string2")
+fx3(arg1)
+fx4("stringA", "stringB")
+fx5() => ret
+fx5a() =>arg2
+fx6("string1", "string2", arg2) => return2
+""",  """
+extract(poop)
+extract("poop")
+extract(woofle)
+"""]
 
     def run(self):
         conf = {'woofle': 'poop'}
         P = CompositionParser(conf)
-        checks = [
-            'extract()',
-            'fx2("stringZ")',
-            'fx3(arg1)',
-            'fx4("stringA", "stringB")',
-            'fx5() => ret',
-            'fx5a()=>arg2',
-            'fx6("string1", "string2", arg2) => return2',
-        ]
-        checks2 = [
-            'extract(poop)',
-            'extract("poop")',
-            'extract(woofle)',
-        ]
-        for chk in [checks, checks2]:
-            for s in chk:
+        for ch in self.checks:
+            for s in ch.split('\n'):
+                if not s:
+                    continue
                 P.parse(s)
             P.forget()
 

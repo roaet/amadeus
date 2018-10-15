@@ -89,8 +89,12 @@ class AMQPBroker(object):
     def _delete_connection(self, name):
         if name not in self.connections:
             return
-        self.connections[name].close()
-        del self.connections[name]
+        try:
+            self.connections[name].close()
+        except Exception:
+            pass
+        finally:
+            del self.connections[name]
 
     def _create_connection(self, name):
         self._delete_connection(name)
@@ -100,16 +104,6 @@ class AMQPBroker(object):
         self._configure_exchanges(channel)
         self._configure_queues(channel)
         return connection, channel
-
-    def blocking_listen(
-            self, connection_name, configuration, routing_key, fx):
-        connection, channel = self._create_connection(connection_name)
-        channel.basic_consume(fx, routing_key)
-        try:
-            channel.start_consuming()
-        except KeyboardInterrupt:
-            channel.stop_consuming()
-        self._delete_connection(connection_name)
 
     def rpc_listen(
             self, connection_name, routing_key, fx):
@@ -132,4 +126,14 @@ class AMQPBroker(object):
         channel.basic_publish(
             exchange=exchange, routing_key=routing_key, body=message,
             properties=properties)
+        self._delete_connection(connection_name)
+
+    def blocking_listen(
+            self, connection_name, configuration, routing_key, fx):
+        connection, channel = self._create_connection(connection_name)
+        channel.basic_consume(fx, routing_key)
+        try:
+            channel.start_consuming()
+        except KeyboardInterrupt:
+            channel.stop_consuming()
         self._delete_connection(connection_name)

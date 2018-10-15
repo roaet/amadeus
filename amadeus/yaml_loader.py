@@ -38,11 +38,6 @@ class YAMLLoader(object):
                 return f
         return None
 
-    def get_type_from_yaml(self, yaml_file):
-        with open(yaml_file, 'r') as stream:
-            yaml_obj = yaml.safe_load(stream)
-            return yaml_obj[self.base_key]['type']
-
     def _does_yaml_lint(self, yaml_file):
         conf = utils.path_join(
             constants.DEFAULT_BASE_CONF, 'default_yaml_lint.yaml')
@@ -112,6 +107,11 @@ class YAMLLoader(object):
                 yaml_file, e))
             return False
         return True
+
+    def get_type_from_yaml(self, yaml_file):
+        with open(yaml_file, 'r') as stream:
+            yaml_obj = yaml.safe_load(stream)
+            return yaml_obj[self.base_key]['type']
 
     def has_entity(self, entity_name):
         return self._is_entity_in_files(entity_name, self.files)
